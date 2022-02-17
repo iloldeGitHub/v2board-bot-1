@@ -1,0 +1,15 @@
+# 机器人配置
+bot:
+  # 机器人名称
+  name: ""
+  token: ""
+  # 签到可获取的最大值流量，单位是MB 1024 为 最多1GB
+  byte: 1024
+  
+# 数据库配置
+database:
+  host: "localhost"
+  port: 3306
+  name: ""
+  username: ""
+  password: ""
