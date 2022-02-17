@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/miyaUU/v2board-bot/service"
-)
+import "github.com/keiko233/V2Board-Bot/service"
 
 func main() {
 	service.InitDB()

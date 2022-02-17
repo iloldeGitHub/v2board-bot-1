@@ -1,4 +1,4 @@
-module github.com/miyaUU/v2board-bot
+module github.com/keiko233/V2Board-Bot
 
 go 1.17
 
