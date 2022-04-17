@@ -5,8 +5,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"math/rand"
-	"os"
 	"time"
 )
 
@@ -46,7 +44,7 @@ func init() {
 	c.GetConfig()
 }
 
-func InitDB() *gorm.DB {
+func InitDB() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8mb4&parseTime=True&loc=Local", c.Database.Username, c.Database.Password, c.Database.Host, c.Database.Port, c.Database.Name)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
@@ -55,20 +53,21 @@ func InitDB() *gorm.DB {
 		},
 	})
 	if err != nil {
-		fmt.Printf("连接数据库失败... \n错误信息: %v", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("InitDB Open %w", err)
 	}
 	if err = db.AutoMigrate(&UUBot{}); err != nil {
-		fmt.Printf("数据库导入失败... \n错误信息: %v", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("InitDB AutoMigrate %w", err)
 	}
-	sqlDB, _ := db.DB()
+	sqlDB, err := db.DB()
+	if err != nil {
+		return nil, fmt.Errorf("InitDB Get DB %w", err)
+	}
 	sqlDB.SetMaxIdleConns(10)
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(10 * time.Second)
 
 	DB = db
-	return db
+	return db, nil
 }
 
 func QueryPlan(planId int) Plan {
@@ -120,8 +119,7 @@ func checkinUser(tgId int64) UUBot {
 	DB.Where("telegram_id = ?", tgId).First(&user)
 	DB.Where("telegram_id = ?", tgId).First(&uu)
 
-	r := rand.New(rand.NewSource(time.Now().Unix()))
-	b := r.Int63n(c.Bot.Byte)
+	b := RandInt(c.Bot.MaxByte, c.Bot.MinByte)
 	CheckIns := b * 1024 * 1024
 	T := user.TransferEnable + CheckIns
 

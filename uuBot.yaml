@@ -4,7 +4,8 @@ bot:
   name: ""
   token: ""
   # 签到可获取的最大值流量，单位是MB 1024 为 最多1GB
-  byte: 1024
+  max_byte: 1024
+  min_byte: 0
   
 # 数据库配置
 database:

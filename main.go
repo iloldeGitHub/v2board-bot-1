@@ -1,8 +1,15 @@
 package main
 
-import "github.com/keiko233/V2Board-Bot/service"
+import (
+	"log"
+
+	"github.com/keiko233/V2Board-Bot/service"
+)
 
 func main() {
-	service.InitDB()
+	_, err := service.InitDB()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	service.Start()
 }
